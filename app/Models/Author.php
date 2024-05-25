@@ -22,10 +22,12 @@ class Author extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
+
     public $timestamps = false;
 
     public function books(): BelongsToMany
     {
-        return $this->belongsToMany(Book::class, 'author_book');
+        return $this->belongsToMany(Book::class, 'author_book', 'book_id', 'author_id');
     }
 }
