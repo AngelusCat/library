@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookRequest;
+use App\Models\Book;
 use App\Services\LibraryService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -21,9 +22,23 @@ class LibraryController extends Controller
         $this->libraryService->addBook($request);
     }
 
-    public function submitCompletedFormToRegistry(Request $request): void
+    public function showFormToEditBook(int $bookId): View
     {
-        $this->libraryService->acceptBookInventoryForm($request);
+        $book = Book::find($bookId);
+
+        $authors = array_map(function ($author) {
+            return $author->full_name;
+        }, $book->authors->all());
+
+        return view('books.edit', [
+            'book' => $book,
+            'authors' => count($authors) > 0 ? implode(', ', $authors) : $book->authors->full_name
+        ]);
+    }
+
+    public function editBook(BookRequest $request): void
+    {
+        $this->libraryService->editBook($request);
     }
 
     public function getRidOfBook(int $id)

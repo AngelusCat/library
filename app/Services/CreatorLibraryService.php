@@ -6,37 +6,40 @@ use App\Http\Requests\BookRequest;
 use App\Models\Author;
 use App\Models\AuthorBook;
 use App\Models\Book;
+use Illuminate\Support\Facades\DB;
 
 class CreatorLibraryService
 {
+    public function __construct(private readonly HelperForCreatorAndChanger $helper){}
     public function addBook(BookRequest $request): void
     {
         $data = $request->all();
 
-        $book = new Book();
-        $book->title = $data['title'];
-        if ($data['description'] !== null) {
-            $book->description = $data['description'];
+        try {
+            DB::beginTransaction();
+
+            $book = new Book();
+            $book->title = $data['title'];
+            if ($data['description'] !== null) {
+                $book->description = $data['description'];
+            }
+            $book->year_of_publication = $data['year_of_publication'];
+            $book->save();
+
+            $bookId = $book->id;
+
+            $arrayOfAuthors = $this->helper->getListOfAuthors($data['authors']);
+
+            $authorsIds = $this->saveAuthorsAndGetId($arrayOfAuthors);
+
+            $this->saveConnectionsBookAuthors($bookId, $authorsIds);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dump($e->getMessage());
         }
-        $book->year_of_publication = $data['yearOfPublication'];
-        $book->save();
 
-        $bookId = $book->id;
-
-        $authors = $this->getListOfAuthors($data['authors']);
-
-        $authorsIds = $this->saveAuthorsAndGetId($authors);
-
-        $this->saveConnectionsBookAuthors($bookId, $authorsIds);
-
-    }
-
-    private function getListOfAuthors(string $authorsLine): array
-    {
-        $authorsArray = explode(',', $authorsLine);
-        return array_map(function (string $author) {
-            return trim($author);
-        }, $authorsArray);
     }
 
     private function authorIsInAuthorsTable(string $fullName): bool

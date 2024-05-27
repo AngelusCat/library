@@ -25,7 +25,7 @@ class BookRequest extends FormRequest
             'title' => 'required|string|regex:/^[a-zа-яё0-9\-\.: ,]{1,120}$/ui',
             'authors' => "required|string|regex:/^[a-zа-яё' \(\)\-,]*$/ui",
             'description' => 'nullable|string',
-            'yearOfPublication' => 'required|integer|regex:/^-?[1-9]{1}[0-9]{2,3}$/|min:-600|max:' . date('Y')
+            'year_of_publication' => 'required|integer|regex:/^-?[1-9]{1}[0-9]{2,3}$/|min:-600|max:' . date('Y')
         ];
     }
 }

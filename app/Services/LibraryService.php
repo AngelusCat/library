@@ -22,6 +22,11 @@ class LibraryService
         $this->creator->addBook($request);
     }
 
+    public function editBook(BookRequest $request): void
+    {
+        $this->changer->editBook($request);
+    }
+
     public function destroyInventoryOfSpecificBook(int $id)
     {
 

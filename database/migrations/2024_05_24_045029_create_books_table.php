@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->year('year_of_publication');
+            $table->integer('year_of_publication');
         });
     }
 
