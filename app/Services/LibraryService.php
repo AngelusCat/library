@@ -2,40 +2,25 @@
 
 namespace App\Services;
 
+use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class RegistryService
+class LibraryService
 {
-    public function __construct(private readonly InventoryMaker $inventoryMaker, private KeeperOfInventories $keeperOfInventories){}
+    public function __construct
+    (
+        private readonly CreatorLibraryService $creator,
+        private readonly ChangerLibraryService $changer,
+        private readonly RemoverLibraryService $remover,
+        private readonly FinderLibraryService $finder
+    ){}
 
-    /**
-     * Выдать бланк на опись
-     * @return View
-     */
-
-    public function issueForm(): View
+    public function addBook(BookRequest $request): void
     {
-        return view('books.create');
+        $this->creator->addBook($request);
     }
-
-    /**
-     * Принять заполненный бланк и попытаться сделать опись
-     * @param Request $request
-     * @return void
-     */
-
-    public function acceptBookInventoryForm(Request $request): void
-    {
-        $this->inventoryMaker->makeInventory($request);
-    }
-
-    /**
-     * Уничтожает опись определенной книги и сдает книгу в утиль
-     * @param int $id
-     * @return void
-     */
 
     public function destroyInventoryOfSpecificBook(int $id)
     {

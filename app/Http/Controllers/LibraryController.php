@@ -2,76 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\RegistryService;
+use App\Http\Requests\BookRequest;
+use App\Services\LibraryService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class LibraryController extends Controller
 {
-    public function __construct(private readonly RegistryService $registryService) {}
+    public function __construct(private readonly LibraryService $libraryService) {}
 
-    /**
-     * Обращается к реестру и просит его выдать бланк на опись новой книги
-     * @return View
-     */
-
-    //public function makeRequestToAddBook(): View
-    public function askRegistryToIssueFormForInventoryingNewBook(): View
+    public function showFormToAddBook(): View
     {
-        return $this->registryService->issueForm();
+        return view('books.create');
     }
 
-    /**
-     * Обращается к реестру и просит его выдать бланк на изменение описи имеющейся книги
-     * @return View
-     */
-
-    public function makeRequestToChangeInformationAboutBook(): View
+    public function addBook(BookRequest $request): void
     {
-        $this->registryService->issueBookInventoryForm();
+        $this->libraryService->addBook($request);
     }
 
-    /**
-     * Принимает заполненный бланк от пользователя и передает его реестру
-     * @param Request $request
-     * @return void
-     */
-
-    //public function giveCompletedFormToRegistry(Request $request)
     public function submitCompletedFormToRegistry(Request $request): void
     {
-        $this->registryService->acceptBookInventoryForm($request);
+        $this->libraryService->acceptBookInventoryForm($request);
     }
-
-    /**
-     * Просит реестр избавиться от описи определенной книги и сдать ее в утиль
-     * @param int $id
-     * @return void
-     */
 
     public function getRidOfBook(int $id)
     {
-        $this->registryService->destroyInventoryOfSpecificBook($id);
+        $this->libraryService->destroyInventoryOfSpecificBook($id);
     }
-
-    /**
-     * Просит реестр создать список описей книг с краткой информацией
-     * @return void
-     */
 
     public function getListOfBooks()
     {
-        $this->registryService->getListOfAllBooks();
+        $this->libraryService->getListOfAllBooks();
     }
-
-    /**
-     * Просит реестр создать список описей авторов с краткой информацией
-     * @return void
-     */
 
     public function getListOfAuthors()
     {
-        $this->registryService->getListOfAllAuthors();
+        $this->libraryService->getListOfAllAuthors();
     }
 
     public function getCompleteInformationAboutBook()
