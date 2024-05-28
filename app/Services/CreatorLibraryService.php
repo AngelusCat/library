@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Requests\BookRequest;
+use App\Http\Requests\StoreBookRequest;
 use App\Models\Author;
 use App\Models\AuthorBook;
 use App\Models\Book;
@@ -11,22 +11,14 @@ use Illuminate\Support\Facades\DB;
 class CreatorLibraryService
 {
     public function __construct(private readonly HelperForCreatorAndChanger $helper){}
-    public function addBook(BookRequest $request): void
+    public function addBook(StoreBookRequest $request): void
     {
         $data = $request->all();
 
         try {
             DB::beginTransaction();
 
-            $book = new Book();
-            $book->title = $data['title'];
-            if ($data['description'] !== null) {
-                $book->description = $data['description'];
-            }
-            $book->year_of_publication = $data['year_of_publication'];
-            $book->save();
-
-            $bookId = $book->id;
+            $bookId = $this->saveBookAndReturnId($data);
 
             $arrayOfAuthors = $this->helper->getListOfAuthors($data['authors']);
 
@@ -39,7 +31,19 @@ class CreatorLibraryService
             DB::rollBack();
             dump($e->getMessage());
         }
+    }
 
+    private function saveBookAndReturnId(array $data): int
+    {
+        $book = new Book();
+        $book->title = $data['title'];
+        if ($data['description'] !== null) {
+            $book->description = $data['description'];
+        }
+        $book->year_of_publication = $data['year_of_publication'];
+        $book->save();
+
+        return $book->id;
     }
 
     private function authorIsInAuthorsTable(string $fullName): bool

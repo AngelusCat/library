@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Http\Requests\BookRequest;
-use App\Models\Book;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 
 class LibraryService
 {
@@ -14,15 +12,15 @@ class LibraryService
         private readonly CreatorLibraryService $creator,
         private readonly ChangerLibraryService $changer,
         private readonly RemoverLibraryService $remover,
-        private readonly FinderLibraryService $finder
+        private readonly FinderLibraryService  $finder
     ){}
 
-    public function addBook(BookRequest $request): void
+    public function addBook(StoreBookRequest $request): void
     {
         $this->creator->addBook($request);
     }
 
-    public function editBook(BookRequest $request): void
+    public function editBook(UpdateBookRequest $request): void
     {
         $this->changer->editBook($request);
     }

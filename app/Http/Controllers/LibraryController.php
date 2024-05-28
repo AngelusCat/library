@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BookRequest;
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Services\LibraryService;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class LibraryController extends Controller
         return view('books.create');
     }
 
-    public function addBook(BookRequest $request): void
+    public function addBook(StoreBookRequest $request): void
     {
         $this->libraryService->addBook($request);
     }
@@ -36,7 +37,7 @@ class LibraryController extends Controller
         ]);
     }
 
-    public function editBook(BookRequest $request): void
+    public function editBook(UpdateBookRequest $request): void
     {
         $this->libraryService->editBook($request);
     }
