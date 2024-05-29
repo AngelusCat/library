@@ -5,6 +5,7 @@
     <title>Список книг</title>
 </head>
 <body>
+    @include('incs.navbar')
     <h1>Список книг</h1>
     <button data-type="create" style="position: fixed; left: 80%;">Добавить новую книгу в библиотеку</button><br><br>
     <hr>
@@ -23,14 +24,14 @@
 
         let createButton = document.querySelector('[data-type="create"]');
         createButton.onclick = function () {
-            window.open('http://library/addBook', 'test', params);
+            window.open('http://library/addBook', 'create', params);
         }
 
         let editButtons = document.querySelectorAll('[data-type="edit"]');
         editButtons.forEach(function (elem) {
             elem.onclick = function () {
                 let id = elem.getAttribute('data-id');
-                window.open('http://library/editBook/' + id, 'test2', params);
+                window.open('http://library/editBook/' + id, 'edit', params);
             }
         });
 
@@ -38,7 +39,7 @@
         deleteButtons.forEach(function (elem) {
             elem.onclick = function () {
                 let id = elem.getAttribute('data-id');
-                window.open('http://library/deleteBook/' + id, 'test3', params);
+                window.open('http://library/deleteBook/' + id, 'delete', params);
             }
         });
 
@@ -46,7 +47,7 @@
         showButtons.forEach(function (elem) {
             elem.onclick = function () {
                 let id = elem.getAttribute('data-id');
-                window.open('http://library/showBook/' + id, 'test4', params);
+                window.open('http://library/showBook/' + id, 'show', params);
             }
         });
     </script>

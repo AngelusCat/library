@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Models\Author;
+use App\Models\Book;
 
 class LibraryService
 {
@@ -33,5 +35,20 @@ class LibraryService
     public function getListOfBooks(): array
     {
         return $this->finder->getListOfBooks();
+    }
+
+    public function getFullInformationAboutBook(int $bookId): Book
+    {
+        return $this->finder->getFullInformationAboutBook($bookId);
+    }
+
+    public function getListOfAuthors(): array
+    {
+        return $this->finder->getListOfAuthors();
+    }
+
+    public function getFullInformationAboutAuthor(int $authorId): Author
+    {
+        return $this->finder->getFullInformationAboutAuthor($authorId);
     }
 }

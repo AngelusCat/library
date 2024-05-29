@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Models\AuthorBook;
 use App\Models\Book;
 use App\Services\LibraryService;
 use Illuminate\Http\RedirectResponse;
@@ -17,6 +18,25 @@ class LibraryController extends Controller
     {
         $listOfBooks = $this->libraryService->getListOfBooks();
         return view('books.index', ['listOfBooks' => $listOfBooks]);
+    }
+
+    public function showFullInformationAboutBook(int $bookId): View
+    {
+        $book = $this->libraryService->getFullInformationAboutBook($bookId);
+        return view('books.show', ['book' => $book]);
+    }
+
+    public function showListOfAuthors(): View
+    {
+        $listOfAuthors = $this->libraryService->getListOfAuthors();
+        return view('authors.index', ['listOfAuthors' => $listOfAuthors]);
+    }
+
+    public function showFullInformationAboutAuthor(int $authorId): View
+    {
+        $author = $this->libraryService->getFullInformationAboutAuthor($authorId);
+        $numberOfBooksWritten = AuthorBook::query()->where('author_id', '=', $author->id)->count();
+        return view('authors.show', ['author' => $author, 'numberOfBooksWritten' => $numberOfBooksWritten]);
     }
 
     public function showFormToAddBook(): View
