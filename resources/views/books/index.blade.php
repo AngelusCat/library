@@ -12,7 +12,7 @@
     @foreach($listOfBooks as $book)
         <p>Название книги: {{ $book->title }}</p>
         <p>Год публикации: {{ $book->year_of_publication }}</p>
-        <p>Один из авторов: {{ $book->authors()->first()->full_name }}</p>
+        <p>Один из авторов: {{ $book->authors()->first()->full_name ?? '' }}</p>
         <button data-type="show" data-id="{{ $book->id }}">Показать полную информацию о книге</button>
         <button data-type="edit" data-id="{{ $book->id }}">Изменить информацию о книге</button>
         <button data-type="delete" data-id="{{ $book->id }}">Удалить книгу</button>

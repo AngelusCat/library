@@ -9,6 +9,6 @@ Route::post('/addBook', [\App\Http\Controllers\LibraryController::class, 'addBoo
 Route::get('/editBook/{book_id}', [\App\Http\Controllers\LibraryController::class, 'showFormToEditBook']);
 Route::patch('/editBook', [\App\Http\Controllers\LibraryController::class, 'editBook']);
 Route::get('/deleteBook/{book_id}', [\App\Http\Controllers\LibraryController::class, 'showFormForDeletingBook']);
-Route::delete('/deleteBook/{book_id}', [\App\Http\Controllers\LibraryController::class, 'deleteBook']);
+Route::delete('/deleteBook/{book_id}', [\App\Http\Controllers\LibraryController::class, 'deleteBook'])->name('deleteBook');
 Route::get('showBook/{book_id}', [\App\Http\Controllers\LibraryController::class, 'showFullInformationAboutBook']);
 Route::get('showAuthor/{author_id}', [\App\Http\Controllers\LibraryController::class, 'showFullInformationAboutAuthor']);
