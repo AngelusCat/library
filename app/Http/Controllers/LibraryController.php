@@ -24,10 +24,10 @@ class LibraryController extends Controller
         return view('books.create');
     }
 
-    public function addBook(StoreBookRequest $request): RedirectResponse
+    public function addBook(StoreBookRequest $request): View
     {
         $this->libraryService->addBook($request);
-        return redirect('/books');
+        return view('books.successfulRedirect', ['message' => 'Книга успешно добавлена.']);
     }
 
     public function showFormToEditBook(int $bookId): View
@@ -44,10 +44,10 @@ class LibraryController extends Controller
         ]);
     }
 
-    public function editBook(UpdateBookRequest $request): RedirectResponse
+    public function editBook(UpdateBookRequest $request): View
     {
         $this->libraryService->editBook($request);
-        return redirect('/books');
+        return view('books.successfulRedirect', ['message' => 'Информация о книге успешно изменена.']);
     }
 
     public function showFormForDeletingBook(int $bookId): View
@@ -55,9 +55,9 @@ class LibraryController extends Controller
         return view('books.delete', ['bookId' => $bookId]);
     }
 
-    public function deleteBook(int $bookId): RedirectResponse
+    public function deleteBook(int $bookId): View
     {
         $this->libraryService->deleteBook($bookId);
-        return redirect('/books');
+        return view('books.successfulRedirect', ['message' => 'Книга успешно удалена.']);
     }
 }

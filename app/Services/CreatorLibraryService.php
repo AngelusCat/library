@@ -59,7 +59,7 @@ class CreatorLibraryService
             $check = $this->authorIsInAuthorsTable($authorFullName);
 
             if ($check) {
-                return Author::query()->where('full_name', '=', $authorFullName)->get('id');
+                return Author::query()->where('full_name', '=', $authorFullName)->get('id')->first()->id;
             } else {
                 $author = new Author();
                 $author->full_name = $authorFullName;
