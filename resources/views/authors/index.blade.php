@@ -9,7 +9,7 @@
     <h1>Список авторов</h1><br>
     <hr>
     @foreach($listOfAuthors as $author)
-        <p>ФИО автора: {{ $author->full_name }}</p>
+        <p><i><b>ФИО автора</b></i>: {{ $author->full_name }}</p>
         <button data-type="showAuthor" data-id="{{ $author->id }}">Показать полную информацию об авторе</button>
         <hr>
     @endforeach

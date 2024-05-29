@@ -5,16 +5,16 @@
     <title>{{ $author->full_name }}</title>
 </head>
 <body>
-    <p>ФИО автора: {{ $author->full_name }}</p>
-    <p>Список книг: </p>
+    <p><i><b>ФИО автора</b></i>: {{ $author->full_name }}</p>
+    <h2 align="center"><i>Список книг</i></h2>
     <hr>
     @foreach($author->books as $book)
-        <p>Книга №{{ $loop->iteration }}</p>
-        <p>ID книги: {{ $book->id }}</p>
-        <p>Название книги: {{ $book->title }}</p>
-        <p>Год публикации: {{ $book->year_of_publication }}</p>
+        <h3 align="center"><i>Книга</i> №{{ $loop->iteration }}</h3>
+        <p><i><b>ID книги</b></i>: {{ $book->id }}</p>
+        <p><i><b>Название книги</b></i>: {{ $book->title }}</p>
+        <p><i><b>Год публикации</b></i>: {{ $book->year_of_publication }}</p>
         <hr>
     @endforeach
-    <p>Количество написанных автором книг, находящихся в библиотеке: {{ $numberOfBooksWritten }}</p>
+    <p><i><b>Количество книг автора, находящихся в библиотеке</b></i>: {{ $numberOfBooksWritten }}</p>
 </body>
 </html>
