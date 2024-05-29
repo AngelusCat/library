@@ -25,39 +25,13 @@ class LibraryService
         $this->changer->editBook($request);
     }
 
-    public function destroyInventoryOfSpecificBook(int $id)
+    public function deleteBook(int $bookId): void
     {
-
+        $this->remover->deleteBook($bookId);
     }
 
-    /**
-     * Возвращает список описей книг с краткой информацией
-     * @return void
-     */
-
-    public function getListOfAllBooks()
+    public function getListOfBooks(): array
     {
-        $this->keeperOfInventories->getQuickSummaryOfBook();
+        return $this->finder->getListOfBooks();
     }
-
-    /**
-     * Возвращает список описей авторов с краткой информацией
-     * @return void
-     */
-
-    public function getListOfAllAuthors()
-    {
-        $this->keeperOfInventories->getBriefInformationAboutAuthor();
-    }
-
-    public function getCompleteInformationAboutBook()
-    {
-        $this->keeperOfInventories->getCompleteInformationAboutBook();
-    }
-
-    public function getCompleteInformationAboutAuthor()
-    {
-        $this->keeperOfInventories->getFullInformationAboutAuthor();
-    }
-
 }

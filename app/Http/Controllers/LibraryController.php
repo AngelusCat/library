@@ -6,21 +6,28 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Services\LibraryService;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class LibraryController extends Controller
 {
     public function __construct(private readonly LibraryService $libraryService) {}
 
+    public function showListOfBooks(): View
+    {
+        $listOfBooks = $this->libraryService->getListOfBooks();
+        return view('books.index', ['listOfBooks' => $listOfBooks]);
+    }
+
     public function showFormToAddBook(): View
     {
         return view('books.create');
     }
 
-    public function addBook(StoreBookRequest $request): void
+    public function addBook(StoreBookRequest $request): RedirectResponse
     {
         $this->libraryService->addBook($request);
+        return redirect('/books');
     }
 
     public function showFormToEditBook(int $bookId): View
@@ -37,33 +44,20 @@ class LibraryController extends Controller
         ]);
     }
 
-    public function editBook(UpdateBookRequest $request): void
+    public function editBook(UpdateBookRequest $request): RedirectResponse
     {
         $this->libraryService->editBook($request);
+        return redirect('/books');
     }
 
-    public function getRidOfBook(int $id)
+    public function showFormForDeletingBook(int $bookId): View
     {
-        $this->libraryService->destroyInventoryOfSpecificBook($id);
+        return view('books.delete', ['bookId' => $bookId]);
     }
 
-    public function getListOfBooks()
+    public function deleteBook(int $bookId): RedirectResponse
     {
-        $this->libraryService->getListOfAllBooks();
-    }
-
-    public function getListOfAuthors()
-    {
-        $this->libraryService->getListOfAllAuthors();
-    }
-
-    public function getCompleteInformationAboutBook()
-    {
-
-    }
-
-    public function getCompleteInformationAboutAuthor()
-    {
-
+        $this->libraryService->deleteBook($bookId);
+        return redirect('/books');
     }
 }

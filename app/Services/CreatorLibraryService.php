@@ -29,7 +29,7 @@ class CreatorLibraryService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            dump($e->getMessage());
+            dump($e);
         }
     }
 
