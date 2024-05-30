@@ -6,6 +6,7 @@ use App\Models\Author;
 use App\Models\AuthorBook;
 use App\Models\Book;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Logging\Exception;
 
 class RemoverLibraryService
 {
@@ -28,12 +29,12 @@ class RemoverLibraryService
                 if ($numberOfBooksWrittenByAuthor === 1) {
                     DB::table('authors')->where('id', '=', $authorId)->delete();
                 }
-                $book->delete();
             }
+            $book->delete();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            dump($e);
+            throw new \Exception($e->getMessage());
         }
     }
 }

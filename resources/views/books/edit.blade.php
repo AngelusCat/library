@@ -26,8 +26,13 @@
         Если Вы хотите удалить автора, то его ФИО нужно вписать в поле для удаления автора, а отсюда не стирать.
     </pre>
     </sup>
+
+    @error('originalOrModifiedAuthors')
+    <div style="color: #ef4444">{{ $message }}</div><br>
+    @enderror
+
     <label for="originalOrModifiedAuthors">ФИО авторов, связанных с книгой: </label>
-    <input type="text" name="originalOrModifiedAuthors" id="originalOrModifiedAuthors" size="100" value="{{ isset($authors) ? $authors : '' }}"><br><br>
+    <input type="text" name="originalOrModifiedAuthors" id="originalOrModifiedAuthors" size="100" value="{{ (old('originalOrModifiedAuthor') !== null) ? old('originalOrModifiedAuthor') : (isset($authors) ? $authors : '') }}"><br><br>
 
     <hr>
     <sup>
@@ -37,8 +42,13 @@
         <b>Пример</b>: Иванов Иван Иванович, Петров Петр Петрович
     </pre>
     </sup>
+
+    @error('newAuthors')
+    <div style="color: #ef4444">{{ $message }}</div><br>
+    @enderror
+
     <label for="newAuthors">ФИО автора(ов), которого нужно добавить к книге: </label>
-    <input type="text" name="newAuthors" id="newAuthors" size="100" placeholder="ФИО автора(ов), которого нужно добавить к книге"><br><br>
+    <input type="text" name="newAuthors" id="newAuthors" size="100" placeholder="ФИО автора(ов), которого нужно добавить к книге" value="{{ (old('newAuthors') !== null) ? old('newAuthors') : '' }}"><br><br>
 
     <hr>
     <sup>
@@ -49,8 +59,13 @@
         <b>Пример</b>: Иванов Иван Иванович, Петров Петр Петрович
     </pre>
     </sup>
+
+    @error('deletedAuthors')
+    <div style="color: #ef4444">{{ $message }}</div><br>
+    @enderror
+
     <label for="deletedAuthors">ФИО автора(ов), которого нужно удалить у книги: </label>
-    <input type="text" name="deletedAuthors" id="deletedAuthors" size="100" placeholder="ФИО автора(ов), которого нужно удалить у книги"><br><br>
+    <input type="text" name="deletedAuthors" id="deletedAuthors" size="100" placeholder="ФИО автора(ов), которого нужно удалить у книги" value="{{ (old('deletedAuthors') !== null) ? old('deletedAuthors') : '' }}"><br><br>
     <hr>
 
     @include('incs.endBookForm')

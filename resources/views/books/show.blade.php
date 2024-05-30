@@ -11,7 +11,7 @@
     @foreach($book->authors as $author)
         <p>{{ $loop->iteration }}) <i><b>ФИО автора</b></i>: {{ $author->full_name }}, <i><b>ID автора</b></i>: {{ $author->id }}</p>
     @endforeach
-    <textarea placeholder="Описание книги">{{ $book->description ?? '' }}</textarea>
+    <textarea cols="100" rows="5" placeholder="Описание книги">{{ $book->description ?? '' }}</textarea>
     <p><i><b>Год публикации</b></i>: {{ $book->year_of_publication }}</p>
 </body>
 </html>

@@ -46,7 +46,12 @@ class LibraryController extends Controller
 
     public function addBook(StoreBookRequest $request): View
     {
-        $this->libraryService->addBook($request);
+        try {
+            $this->libraryService->addBook($request);
+        } catch (\Exception $e) {
+            abort('500');
+        }
+
         return view('books.successfulRedirect', ['message' => 'Книга успешно добавлена.']);
     }
 
@@ -66,7 +71,11 @@ class LibraryController extends Controller
 
     public function editBook(UpdateBookRequest $request): View
     {
-        $this->libraryService->editBook($request);
+        try {
+            $this->libraryService->editBook($request);
+        } catch (\Exception $e) {
+            return view('books.unsuccessfulRedirect', ['message' => $e->getMessage()]);
+        }
         return view('books.successfulRedirect', ['message' => 'Информация о книге успешно изменена.']);
     }
 
@@ -77,7 +86,11 @@ class LibraryController extends Controller
 
     public function deleteBook(int $bookId): View
     {
-        $this->libraryService->deleteBook($bookId);
+        try {
+            $this->libraryService->deleteBook($bookId);
+        } catch (\Exception $e) {
+            abort(500);
+        }
         return view('books.successfulRedirect', ['message' => 'Книга успешно удалена.']);
     }
 }

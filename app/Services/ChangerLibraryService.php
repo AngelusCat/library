@@ -7,11 +7,15 @@ use App\Models\Author;
 use App\Models\AuthorBook;
 use App\Models\Book;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Logging\Exception;
 
 class ChangerLibraryService
 {
     public function __construct(private readonly HelperForCreatorAndChanger $helper){}
 
+    /**
+     * @throws \Exception
+     */
     public function editBook(UpdateBookRequest $request): void
     {
         $formData = $request->all();
@@ -46,7 +50,7 @@ class ChangerLibraryService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            dump($e);
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -85,7 +89,7 @@ class ChangerLibraryService
             $id = Author::query()->where('full_name', '=', $authorsFullName)->get('id')->first();
 
             if ($id === null) {
-                die('Попытка удалить автора, которого нет в таблице authors');
+                throw new Exception("Нельзя удалить автора у книги, если такого автора нет в библиотеки.");
             }
             return $id->id;
         }, $authorsToBeDeleted);
@@ -96,16 +100,24 @@ class ChangerLibraryService
 
         if (count($idOfAuthorsAssociatedWithBook) === 1) {
             if (!empty(array_intersect($idOfAuthorsToBeDeleted, $idOfAuthorsAssociatedWithBook))) {
-                die('Нельзя удалять автора у книги, если он единственный у нее. Книга не может быть без автора');
+                throw new Exception("Вы пытаетесь удалить единственного автора у книги. Книга в этой библиотеке не может существовать без автора, поэтому сайт отказал Вам в выполнении вашего запроса.");
             }
         }
 
         foreach ($idOfAuthorsToBeDeleted as $authorId) {
 
-            //Сделать проверку, что удаляемый id есть в $idOfAuthorsAssociatedWithBook
-
             if (!in_array($authorId, $idOfAuthorsAssociatedWithBook)) {
-                die ('Автор отвязывается только от своей книги');
+                throw new Exception("Вы пытаетесь удалить автора, который не относится к этой книге.");
+            }
+
+            $additionalCheckForNumberOfAuthorsAssociatedWithBook = array_map(function ($author) {
+                return $author->id;
+            }, Book::find($bookId)->authors()->get(['id'])->all());
+
+            if (count($additionalCheckForNumberOfAuthorsAssociatedWithBook) === 1) {
+                if (!empty(array_intersect($idOfAuthorsToBeDeleted, $idOfAuthorsAssociatedWithBook))) {
+                    throw new Exception("Вы пытаетесь удалить единственного автора у книги. Книга в этой библиотеке не может существовать без автора, поэтому сайт отказал Вам в выполнении вашего запроса.");
+                }
             }
 
             DB::table('author_book')->where('author_id', '=', $authorId)->where('book_id', '=', $bookId)->delete();
@@ -148,12 +160,10 @@ class ChangerLibraryService
                 $newFullName = preg_split('/\([а-яё ]*\)$/ui', $author, -1, PREG_SPLIT_NO_EMPTY);
                 $newFullName = trim($newFullName[0]);
 
-                //Проверка, что авторов с ФИО === $newFullName нет в таблице authors
-
                 $numberOfAuthorsWithThisFullName = Author::query()->where('full_name', '=', $newFullName)->count();
 
                 if ($numberOfAuthorsWithThisFullName !== 0) {
-                    die('Нельзя изменять ФИО автора на то, которое занято другим автором.');
+                    throw new Exception("В библиотеке не может быть двух авторов с одинаковым именем. Вы пытаетесь изменить ФИО определенного автора на ФИО автора, который уже есть в библиотеке.");
                 }
 
                 $authorId = Author::query()->where('full_name', '=', $oldFullName)->get('id')->first()->id;

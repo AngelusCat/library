@@ -7,7 +7,6 @@
 <body>
 
 <h1>Добавить книгу в библиотеку</h1><br>
-
 <form method="POST" action="/addBook">
     @include('incs.startBookForm')
 
@@ -20,8 +19,12 @@
     </pre>
     </sup>
 
+    @error('authors')
+        <div style="color: #ef4444">{{ $message }}</div><br>
+    @enderror
+
     <label for="authors">ФИО автора(ов) книги</label>
-    <input type="text" name="authors" id="authors" placeholder="ФИО автора(ов) книги" value="{{ isset($authors) ? $authors : '' }}" size="97" required><br><br>
+    <input type="text" name="authors" id="authors" placeholder="ФИО автора(ов) книги" value="{{ (old('authors') !== null) ? old('authors') : (isset($authors) ? $authors : '') }}" size="97" required><br><br>
 
     @include('incs.endBookForm')
 
