@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\CreatorLibraryServiceException;
 use App\Http\Requests\StoreBookRequest;
 use App\Models\Author;
 use App\Models\AuthorBook;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\DB;
 class CreatorLibraryService
 {
     public function __construct(private readonly HelperForCreatorAndChanger $helper){}
+
+    /**
+     * @throws CreatorLibraryServiceException
+     */
     public function addBook(StoreBookRequest $request): void
     {
         $data = $request->all();
@@ -29,7 +34,7 @@ class CreatorLibraryService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            throw new \Exception($e->getMessage());
+            throw new CreatorLibraryServiceException($e->getMessage());
         }
     }
 

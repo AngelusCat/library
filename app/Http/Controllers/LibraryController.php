@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ChangerLibraryServiceException;
+use App\Exceptions\CreatorLibraryServiceException;
+use App\Exceptions\RemoverLibraryServiceException;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\AuthorBook;
@@ -48,7 +51,7 @@ class LibraryController extends Controller
     {
         try {
             $this->libraryService->addBook($request);
-        } catch (\Exception $e) {
+        } catch (CreatorLibraryServiceException $e) {
             abort('500');
         }
 
@@ -73,7 +76,7 @@ class LibraryController extends Controller
     {
         try {
             $this->libraryService->editBook($request);
-        } catch (\Exception $e) {
+        } catch (ChangerLibraryServiceException $e) {
             return view('books.unsuccessfulRedirect', ['message' => $e->getMessage()]);
         }
         return view('books.successfulRedirect', ['message' => 'Информация о книге успешно изменена.']);
@@ -88,7 +91,7 @@ class LibraryController extends Controller
     {
         try {
             $this->libraryService->deleteBook($bookId);
-        } catch (\Exception $e) {
+        } catch (RemoverLibraryServiceException $e) {
             abort(500);
         }
         return view('books.successfulRedirect', ['message' => 'Книга успешно удалена.']);

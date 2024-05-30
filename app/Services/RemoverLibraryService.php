@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\RemoverLibraryServiceException;
 use App\Models\Author;
 use App\Models\AuthorBook;
 use App\Models\Book;
@@ -10,6 +11,9 @@ use PHPUnit\Logging\Exception;
 
 class RemoverLibraryService
 {
+    /**
+     * @throws RemoverLibraryServiceException
+     */
     public function deleteBook(int $bookId): void
     {
         $book = Book::find($bookId);
@@ -34,7 +38,7 @@ class RemoverLibraryService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            throw new \Exception($e->getMessage());
+            throw new RemoverLibraryServiceException($e->getMessage());
         }
     }
 }

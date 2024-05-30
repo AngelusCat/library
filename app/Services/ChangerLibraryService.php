@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\AttemptWasMadeToDeleteAuthorThatIsNotInAuthorsTable;
+use App\Exceptions\AuthorsFullNameMustBeUnique;
+use App\Exceptions\ChangerLibraryServiceException;
+use App\Exceptions\TryingToRemoveAuthorThatIsNotRelatedToBook;
+use App\Exceptions\TryingToRemoveOnlyAuthorOfBook;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Author;
 use App\Models\AuthorBook;
@@ -48,9 +53,9 @@ class ChangerLibraryService
             }
 
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (ChangerLibraryServiceException $e) {
             DB::rollBack();
-            throw new Exception($e->getMessage());
+            throw new ChangerLibraryServiceException($e->getMessage());
         }
     }
 
@@ -83,13 +88,20 @@ class ChangerLibraryService
         $book->save();
     }
 
+    /**
+     * @throws AttemptWasMadeToDeleteAuthorThatIsNotInAuthorsTable
+     * @throws TryingToRemoveOnlyAuthorOfBook
+     * @throws TryingToRemoveAuthorThatIsNotRelatedToBook
+     */
     private function removeAuthorFromBook(array $authorsToBeDeleted, int $bookId): void
     {
-        $idOfAuthorsToBeDeleted = array_map(function ($authorsFullName) {
+        $idOfAuthorsToBeDeleted = array_map(/**
+         * @throws AttemptWasMadeToDeleteAuthorThatIsNotInAuthorsTable
+         */ function ($authorsFullName) {
             $id = Author::query()->where('full_name', '=', $authorsFullName)->get('id')->first();
 
             if ($id === null) {
-                throw new Exception("Нельзя удалить автора у книги, если такого автора нет в библиотеки.");
+                throw new AttemptWasMadeToDeleteAuthorThatIsNotInAuthorsTable("Нельзя удалить автора у книги, если такого автора нет в библиотеки.");
             }
             return $id->id;
         }, $authorsToBeDeleted);
@@ -100,14 +112,14 @@ class ChangerLibraryService
 
         if (count($idOfAuthorsAssociatedWithBook) === 1) {
             if (!empty(array_intersect($idOfAuthorsToBeDeleted, $idOfAuthorsAssociatedWithBook))) {
-                throw new Exception("Вы пытаетесь удалить единственного автора у книги. Книга в этой библиотеке не может существовать без автора, поэтому сайт отказал Вам в выполнении вашего запроса.");
+                throw new TryingToRemoveOnlyAuthorOfBook("Вы пытаетесь удалить единственного автора у книги. Книга в этой библиотеке не может существовать без автора, поэтому сайт отказал Вам в выполнении вашего запроса.");
             }
         }
 
         foreach ($idOfAuthorsToBeDeleted as $authorId) {
 
             if (!in_array($authorId, $idOfAuthorsAssociatedWithBook)) {
-                throw new Exception("Вы пытаетесь удалить автора, который не относится к этой книге.");
+                throw new TryingToRemoveAuthorThatIsNotRelatedToBook("Вы пытаетесь удалить автора, который не относится к этой книге.");
             }
 
             $additionalCheckForNumberOfAuthorsAssociatedWithBook = array_map(function ($author) {
@@ -116,7 +128,7 @@ class ChangerLibraryService
 
             if (count($additionalCheckForNumberOfAuthorsAssociatedWithBook) === 1) {
                 if (!empty(array_intersect($idOfAuthorsToBeDeleted, $idOfAuthorsAssociatedWithBook))) {
-                    throw new Exception("Вы пытаетесь удалить единственного автора у книги. Книга в этой библиотеке не может существовать без автора, поэтому сайт отказал Вам в выполнении вашего запроса.");
+                    throw new TryingToRemoveOnlyAuthorOfBook("Вы пытаетесь удалить единственного автора у книги. Книга в этой библиотеке не может существовать без автора, поэтому сайт отказал Вам в выполнении вашего запроса.");
                 }
             }
 
@@ -149,6 +161,9 @@ class ChangerLibraryService
 
     }
 
+    /**
+     * @throws AuthorsFullNameMustBeUnique
+     */
     private function changeAuthorsFullName(array $listOfAuthors): void
     {
         foreach ($listOfAuthors as $author) {
@@ -163,7 +178,7 @@ class ChangerLibraryService
                 $numberOfAuthorsWithThisFullName = Author::query()->where('full_name', '=', $newFullName)->count();
 
                 if ($numberOfAuthorsWithThisFullName !== 0) {
-                    throw new Exception("В библиотеке не может быть двух авторов с одинаковым именем. Вы пытаетесь изменить ФИО определенного автора на ФИО автора, который уже есть в библиотеке.");
+                    throw new AuthorsFullNameMustBeUnique("В библиотеке не может быть двух авторов с одинаковым именем. Вы пытаетесь изменить ФИО определенного автора на ФИО автора, который уже есть в библиотеке.");
                 }
 
                 $authorId = Author::query()->where('full_name', '=', $oldFullName)->get('id')->first()->id;
