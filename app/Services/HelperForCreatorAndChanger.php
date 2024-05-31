@@ -11,4 +11,11 @@ class HelperForCreatorAndChanger
             return trim($author);
         }, $authorsArray);
     }
+
+    public function getBookIdFromUrlReferer(string $urlReferer): int
+    {
+        $id = [];
+        preg_match_all('/\/[0-9]*$/', $urlReferer, $id);
+        return intval(mb_substr($id[0][0], 1));
+    }
 }

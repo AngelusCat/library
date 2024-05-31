@@ -27,7 +27,7 @@ class ChangerLibraryService
 
         $urlReferer = $request->session()->all()['_previous']['url'];
 
-        $bookId = $this->getBookIdFromUrlReferer($urlReferer);
+        $bookId = $this->helper->getBookIdFromUrlReferer($urlReferer);
 
         $bookInformation['title'] = $formData['title'];
         $bookInformation['description'] = $formData['description'];
@@ -57,13 +57,6 @@ class ChangerLibraryService
             DB::rollBack();
             throw new ChangerLibraryServiceException($e->getMessage());
         }
-    }
-
-    private function getBookIdFromUrlReferer(string $urlReferer): int
-    {
-        $id = [];
-        preg_match_all('/\/[0-9]*$/', $urlReferer, $id);
-        return intval(mb_substr($id[0][0], 1));
     }
 
     private function getListOfChangedFieldsExceptAuthors(array $bookInformation, int $bookId): array

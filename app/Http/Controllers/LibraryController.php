@@ -9,13 +9,15 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\AuthorBook;
 use App\Models\Book;
+use App\Services\HelperForCreatorAndChanger;
 use App\Services\LibraryService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class LibraryController extends Controller
 {
-    public function __construct(private readonly LibraryService $libraryService) {}
+    public function __construct(private readonly LibraryService $libraryService, private readonly HelperForCreatorAndChanger $helper) {}
 
     public function showListOfBooks(): View
     {
@@ -74,6 +76,14 @@ class LibraryController extends Controller
 
     public function editBook(UpdateBookRequest $request): View
     {
+        $urlReferer = $request->session()->all()['_previous']['url'];
+        $bookId = $this->helper->getBookIdFromUrlReferer($urlReferer);
+        $book = Book::find($bookId);
+
+        if (! Gate::allows('update-book', $book)) {
+            abort(403);
+        }
+
         try {
             $this->libraryService->editBook($request);
         } catch (ChangerLibraryServiceException $e) {
@@ -89,6 +99,12 @@ class LibraryController extends Controller
 
     public function deleteBook(int $bookId): View
     {
+        $book = Book::find($bookId);
+
+        if (! Gate::allows('delete-book', $book)) {
+            abort(403);
+        }
+
         try {
             $this->libraryService->deleteBook($bookId);
         } catch (RemoverLibraryServiceException $e) {

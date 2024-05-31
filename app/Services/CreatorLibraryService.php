@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBookRequest;
 use App\Models\Author;
 use App\Models\AuthorBook;
 use App\Models\Book;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreatorLibraryService
@@ -46,6 +47,7 @@ class CreatorLibraryService
             $book->description = $data['description'];
         }
         $book->year_of_publication = $data['year_of_publication'];
+        $book->user_id = Auth::id();
         $book->save();
 
         return $book->id;
