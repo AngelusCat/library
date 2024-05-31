@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\AuthorBook;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,5 +39,9 @@ Route::get('/deleteBook/{book_id}', [\App\Http\Controllers\LibraryController::cl
 Route::delete('/deleteBook/{book_id}', [\App\Http\Controllers\LibraryController::class, 'deleteBook'])->name('deleteBook')->middleware('auth');
 Route::get('showBook/{book_id}', [\App\Http\Controllers\LibraryController::class, 'showFullInformationAboutBook']);
 Route::get('showAuthor/{author_id}', [\App\Http\Controllers\LibraryController::class, 'showFullInformationAboutAuthor']);
+Route::get('/test/{author_id}', function ($authorId) {
+    $number = AuthorBook::query()->where('author_id', '=', $authorId)->count();
+    return response()->json($number);
+});
 
 require __DIR__.'/auth.php';

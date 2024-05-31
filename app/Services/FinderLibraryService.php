@@ -25,14 +25,11 @@ class FinderLibraryService
         foreach ($books as $book) {
             $authors = $book->authors->all();
             foreach ($authors as $author) {
-                $fullName = $author->full_name;
-                if (in_array($fullName, $result)) {
-                    continue;
-                }
                 $result[] = $author;
             }
         }
-        return $result;
+
+        return collect($result)->unique('full_name')->all();
     }
 
     public function getFullInformationAboutAuthor(int $authorId): Author

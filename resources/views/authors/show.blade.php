@@ -15,6 +15,19 @@
         <p><i><b>Год публикации</b></i>: {{ $book->year_of_publication }}</p>
         <hr>
     @endforeach
-    <p><i><b>Количество книг автора, находящихся в библиотеке</b></i>: {{ $numberOfBooksWritten }}</p>
+    <p><i><b>Количество книг автора, находящихся в библиотеке</b></i>: </p><p id="numberOfBooks">{{ $numberOfBooksWritten }}</p>
+    <button id="updateNumberOfBooks" data-id="{{ $author->id }}">Обновить количество книг</button>
+    <script>
+        let numberOfBooks = document.getElementById('numberOfBooks');
+        let updateNumberOfBooksButton = document.getElementById('updateNumberOfBooks');
+        let id = updateNumberOfBooksButton.getAttribute('data-id');
+        updateNumberOfBooksButton.addEventListener('click', function () {
+            let promise = fetch('/test/' + id).then(function (response) {
+                response.text().then(function (text) {
+                    numberOfBooks.textContent = text;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
